@@ -232,4 +232,31 @@ public class UserDAO {
         return list;
     }
 
+    public void deletePhoneByUser(Long id){
+
+        String sql = "delete from telefonelearn where userlearning=?";
+        String sql2 = "delete from learning where id=?";
+
+        try {
+            PreparedStatement query1 = conn.prepareStatement(sql);
+            query1.setLong(1, id);
+
+            PreparedStatement query2 = conn.prepareStatement(sql2);
+            query2.setLong(1, id);
+
+            query1.executeUpdate();
+            query2.executeUpdate();
+            conn.commit();
+
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+    }
+
 }

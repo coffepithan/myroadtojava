@@ -84,4 +84,8 @@ public class MainTest {
         }
     }
 
+    @Test
+    public void deletePhoneByUser(){
+        dao.deletePhoneByUser(2L);
+    }
 }
