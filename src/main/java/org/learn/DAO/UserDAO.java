@@ -1,6 +1,8 @@
 package org.learn.DAO;
 
 import org.learn.ConnectionJDBC.SingleConnection;
+import org.learn.model.BeanUserPhone;
+import org.learn.model.Telefone;
 import org.learn.model.User;
 
 import java.sql.Connection;
@@ -142,6 +144,92 @@ public class UserDAO {
         }
 
 
+    }
+    //save a phone in telefonelearn table
+    public void saveNum(Telefone phone){
+
+        String sql = "insert into telefonelearn(number, type, userlearning) values (?, ?, ?)";
+
+        try {
+            PreparedStatement query = conn.prepareStatement(sql);
+
+            query.setString(1, phone.getNumber());
+            query.setString(2, phone.getType());
+            query.setLong(3, phone.getUserNum());
+
+            query.execute();
+            conn.commit();
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+    }
+    //list all phone
+    public List<Telefone> listAllPhone(){
+
+        List<Telefone> list = new ArrayList<Telefone>();
+
+        try{
+
+            String sql = "select * from telefonelearn";//query that get all reg from learning table
+
+            PreparedStatement query = conn.prepareStatement(sql);
+            ResultSet result = query.executeQuery();
+
+            while (result.next()){
+
+                Telefone phone = new Telefone();
+
+                phone.setId(result.getLong("id"));
+                phone.setNumber(result.getString("number"));
+                phone.setType(result.getString("type"));
+                phone.setUserNum(result.getLong("userlearning"));
+
+                list.add(phone);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+
+        }
+
+        return list;
+    }
+    //list filtered phones by user
+    public List<BeanUserPhone> listPhoneByUser(Long id){
+
+        List<BeanUserPhone> list = new ArrayList<BeanUserPhone>();
+
+        try{
+
+            String sql = "select * from telefonelearn as phone inner join learning as learn on phone.userlearning = learn.id where learn.id=?";//query that get all reg from learning table
+
+            PreparedStatement query = conn.prepareStatement(sql);
+            query.setLong(1, id);
+            ResultSet result = query.executeQuery();
+
+            while (result.next()){
+
+                BeanUserPhone userPhone = new BeanUserPhone();
+
+
+                userPhone.setName(result.getString("name"));
+                userPhone.setNumber(result.getString("number"));
+                userPhone.setEmail(result.getString("type"));
+
+                list.add(userPhone);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
     }
 
 }
